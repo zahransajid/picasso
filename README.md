@@ -14,3 +14,13 @@ stylize/
 .../
 
 ```
+
+To install requirements, run
+
+```
+python -m venv .
+Scripts\Activate.ps1
+pip install -r requirements.txt
+```
+
+Make sure you are not using the Windows Store version of the Python interpreter.
