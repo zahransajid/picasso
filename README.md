@@ -8,8 +8,9 @@ The directory structure should look like this
 ```
 stylize/
 ├─ magenta_arbitrary-image-stylization-v1-256_2/
-├─ assets/
-├─ variables/
-├─ saved_model.pb
+│  ├─ saved_model.pb
+│  ├─ assets/
+│  ├─ variables/
 .../
+
 ```
