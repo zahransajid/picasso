@@ -7,26 +7,21 @@ import Typography from '@mui/material/Typography'
 import Button from '@mui/material/Button'
 import PaletteIcon from '@mui/icons-material/Palette';
 import { ChildFriendlyOutlined } from '@mui/icons-material'
+import {ThemeProvider, useTheme} from "@mui/material/styles"
 
 
 export function NavBar () {
-  
+  let theme = useTheme()
   return(
         <AppBar 
           position="static"
-          color="primary">
+          color="primary"
+          style={{
+            backgroundColor: "rgba(0,0,0, 0.4)"
+          }}>
           <Toolbar>
-            <IconButton
-              size="large"
-              edge="start"
-              color="inherit"
-              aria-label="menu"
-              sx={{ mr: 2 }}
-            >
-            <PaletteIcon />
-            </IconButton>
-            <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-              Picasso 
+            <Typography variant="h4" align="center" component="div" color={theme.palette.secondary.main} sx={{ flexGrow: 1 }}>
+              PICASSO
             </Typography>
           </Toolbar>
         </AppBar>
