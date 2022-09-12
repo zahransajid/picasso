@@ -11,7 +11,7 @@ model = stylize.Model()
 # style_img = stylize.utils.load_img(r"stylize\style_images\Picasso1.jpg")
 
 
-@app.post("/file/")
+@app.get("/file/")
 def create_upload_file(file1: UploadFile = File(...),file2: UploadFile = File(...)):
     if file1.content_type not in ["image/png", "image/jpeg"]:
         raise HTTPException(status_code=415, detail="Wrong file type, use png or jpeg")
