@@ -12,7 +12,7 @@ model = stylize.Model()
 
 
 @app.get("/file/")
-def create_upload_file(file1: UploadFile = File(...),file2: UploadFile = File(...)):
+def create_upload_file(file1: UploadFile = File(),file2: UploadFile = File()):
     if file1.content_type not in ["image/png", "image/jpeg"]:
         raise HTTPException(status_code=415, detail="Wrong file type, use png or jpeg")
     if file2.content_type not in ["image/png", "image/jpeg"]:
