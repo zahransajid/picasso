@@ -20,7 +20,7 @@ export function NavBar () {
             backgroundColor: "rgba(0,0,0, 0.4)"
           }}>
           <Toolbar>
-            <Typography variant="h4" align="center" component="div" color={theme.palette.secondary.main} sx={{ flexGrow: 1 }}>
+            <Typography variant="h3" align="center" component="div" color={theme.palette.secondary.main} sx={{ flexGrow: 1 }}>
               PICASSO
             </Typography>
           </Toolbar>

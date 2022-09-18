@@ -1,9 +1,14 @@
-import React from "react";
+import React, { createRef, useRef, useState} from "react";
 import {teal, yellow} from '@mui/material/colors';
 import { createTheme, ThemeProvider, responsiveFontSizes } from '@mui/material/styles'
 import { SnackbarProvider } from 'notistack';
-import { Typography, Button, Grid, Box, Card } from "@mui/material"
+import { useSnackbar } from "notistack";
+import { Typography, Button, Grid, Box, Card, IconButton } from "@mui/material";
 import { NavBar } from "./components/NavBar";
+import {Carousel, CarouselItem} from "./components/Carousel"
+import DisplayCard from "./components/DisplayCard";
+import NavigateNextIcon from '@mui/icons-material/NavigateNext';
+import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
 
 let theme = createTheme({
     palette: {
@@ -16,15 +21,35 @@ let theme = createTheme({
         } 
     },
     typography:{
-        fontFamily: ['Roboto', '"Helvetica Neue"'].join(", ") ,
-        h5: {fontWeight: 500},
-        h4: {fontWeight: 500}
+        fontFamily: ['Cabin Sketch', 'Roboto', '"Helvetica Neue"'].join(", "),
+        h3: {fontWeight: 700},
+        h5: {fontWeight: 700},
+        h4: {fontWeight: 700}
     }
   })
 
 theme = responsiveFontSizes(theme);
 
 const App = () => {
+    const styles : string[] = ["style_1.jpg", "style_2.jpg", "style_3.jpg", "style_4.jpg"]
+    const [userImage, setUserImage] = useState("sample_portrait.jpg");
+    const [selectImagePrompt, setSelectImagePrompt] = useState("Select an Image")
+    const [activeIndex, setActiveIndex] = useState(0);
+    // const {enqueueSnackbar, closeSnackbar} = useSnackbar();
+    const onFileSelected = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const files = e.target.files;
+        if (!files || files.length < 1) return console.log("No file selected !");
+        setUserImage(URL.createObjectURL(files[0]));
+        setSelectImagePrompt("Image to Style Transfer")
+    }
+
+    const onNextSlide = () => {
+        setActiveIndex(activeIndex+1);
+    }
+
+    const onPrevSlide = () => {
+        setActiveIndex(activeIndex-1)
+    }
     return (
             <ThemeProvider theme={theme}>
                 <SnackbarProvider autoHideDuration={2000}>
@@ -43,22 +68,7 @@ const App = () => {
                                 alignItems: "center",
                                 justifyContent: "center"
                             }}>
-                                <Card sx={{
-                                    width: "80%",
-                                    height: "70%",
-                                    backgroundColor: "rgba(0,0,0, 0.4)",
-                                    display: "flex",
-                                    flexDirection: "column",
-                                    borderColor: theme.palette.secondary.main,
-                                    borderRadius: '15px',
-                                    borderStyle: 'solid',
-                                    borderWidth: "2px",
-
-                                }}>
-                                    <Typography marginTop="10px" variant="h3" textAlign="center" color={theme.palette.secondary.main} >
-                                        Image to Stylize
-                                    </Typography>
-                                    
+                                <DisplayCard>
                                     <Box sx={{
                                         width: "100%",
                                         display:"flex",
@@ -67,16 +77,34 @@ const App = () => {
                                         justifyContent: "center",
                                         flex: 1,
                                     }}>
-                                        <Button sx={{
+                                        
+                                        <Button     
+                                        component="label"
+                                        variant="text"
+                                        sx={{
+                                            backgroundImage: `url('${userImage}')`,
+                                            backgroundPosition: 'center',
+                                            backgroundRepeat:'no-repeat',
+                                            backgroundSize: 'cover',
                                             width: "90%",
-                                            height: "90%",
-
+                                            height: "90%"
                                         }}>
-                                            Select your Image or Drag and Drop
+                                            <Typography variant="h4" sx={{
+                                                backgroundColor: "rgba(0,0,0, 0.4)",
+                                                padding: "10px",
+                                                borderRadius: "10px"
+                                            }}>
+                                                {selectImagePrompt}
+                                            </Typography>
+                                            <input
+                                                type="file"
+                                                hidden
+                                                onChange={onFileSelected}
+                                            />
                                         </Button>
                                     </Box>
 
-                                </Card>
+                                </DisplayCard>
                             </Grid>
 
                             <Grid xs={6} sx={{
@@ -84,21 +112,7 @@ const App = () => {
                                 alignItems: "center",
                                 justifyContent: "center"
                             }}>
-                                <Card sx={{
-                                        width: "80%",
-                                        height: "70%",
-                                        backgroundColor: "rgba(0,0,0, 0.4)",
-                                        display: "flex",
-                                        flexDirection: "column",
-                                        borderColor: theme.palette.secondary.main,
-                                        borderRadius: '15px',
-                                        borderStyle: 'solid',
-                                        borderWidth: "2px",
-
-                                    }}>
-                                    <Typography marginTop="10px" variant="h3" textAlign="center" color={theme.palette.secondary.main} >
-                                        Image Style to Transfer
-                                    </Typography>
+                                <DisplayCard>
                                     
                                     <Box sx={{
                                         width: "100%",
@@ -107,17 +121,48 @@ const App = () => {
                                         alignItems: "center",
                                         justifyContent: "center",
                                         flex: 1,
+                                        flexDirection: "row",
+                                        padding: "10px",
                                     }}>
-                                        <Button sx={{
-                                            width: "90%",
-                                            height: "90%",
-
+                                        <IconButton 
+                                            disabled={activeIndex == 0 ? true : false}
+                                            size="large"
+                                            color="secondary"
+                                            onClick={onPrevSlide}>
+                                            <NavigateBeforeIcon sx={{fontSize:"3rem"}} />
+                                        </IconButton>
+                                        <Carousel activeIndex={activeIndex} style={{
+                                            margin: "10px"
                                         }}>
-                                            Select your Image or Drag and Drop
-                                        </Button>
+                                            {
+                                            styles.map((file) => 
+                                                <CarouselItem
+                                                key={file}
+                                                style={{
+                                                    backgroundImage: `url('/styles/${file}')`,
+                                                    backgroundPosition: 'center',
+                                                    backgroundRepeat:'no-repeat',
+                                                    backgroundSize: 'cover',
+                                                    font: "Times New Roman"
+                                                }}>
+                                                    <Typography>
+                                                        The is the first slide ...
+                                                    </Typography>
+                                                </CarouselItem>
+                                            )
+                                            }
+                                        </Carousel>
+                                        <IconButton
+                                            disabled={activeIndex == styles.length-1 ? true : false}
+                                            size="large"
+                                            color="secondary"
+                                            onClick={onNextSlide}>
+                                            <NavigateNextIcon sx={{fontSize:"3rem"}} />
+                                        </IconButton>
+                                        
                                     </Box>
 
-                                </Card>
+                                </DisplayCard>
                             </Grid>
 
                         </Grid>
