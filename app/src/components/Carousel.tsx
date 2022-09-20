@@ -4,7 +4,7 @@ import "./css/Carousel.css"
 import { ChildCare } from "@mui/icons-material";
 
 
-export const CarouselItem = (props : {children : JSX.Element, key? : string, style?: React.CSSProperties }) => {
+export const CarouselItem = (props : {children?: JSX.Element, key? : string, style?: React.CSSProperties }) => {
 
     return(
         <div 

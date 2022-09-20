@@ -1,0 +1,20 @@
+[
+    {  
+        "id": "001", 
+        "title": "Portrait Pablo Picasso Painting",
+        "file": "Picasso1.jpg",
+        "description": "picasso's classic art piece"
+    },
+    {
+        "id": "002", 
+        "title": "Spider of The Evening",
+        "file": "Dali1.jpg",
+        "description": "picasso's classic art piece"
+    },
+    {
+        "id": "003", 
+        "title": "Dali 2",
+        "file": "Dali2.jpg",
+        "description": "picasso's classic art piece"
+    }
+]
