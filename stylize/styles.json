@@ -1,0 +1,26 @@
+[
+  {
+    "id": "001",
+    "title": "Portrait Pablo Picasso Painting",
+    "file": "Picasso1.jpg",
+    "description": "picasso's classic art piece"
+  },
+  {
+    "id": "002",
+    "title": "Mandolin and Guitar",
+    "file": "Picasso2.jpg",
+    "description": "A still life of a mandolin and a guitar. 1924, Pablo Picasso."
+  },
+  {
+    "id": "003",
+    "title": "Spider of The Evening",
+    "file": "Dali1.jpg",
+    "description": "picasso's classic art piece"
+  },
+  {
+    "id": "004",
+    "title": "Dali 2",
+    "file": "Dali2.jpg",
+    "description": "picasso's classic art piece"
+  }
+]
