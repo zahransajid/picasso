@@ -15,12 +15,17 @@ stylize/
 
 ```
 
-To install requirements, run
+To install requirements and start server
 
 ```
-python -m venv .
-Scripts\Activate.ps1
-pip install -r requirements.txt
+poetry install
+poetry run python -m uvicorn app:app
+```
+
+To install and start the frontend web application
+```
+npm install
+npm start
 ```
 
 Make sure you are not using the Windows Store version of the Python interpreter.

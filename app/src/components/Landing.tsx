@@ -18,6 +18,7 @@ export const Landing = () => {
             }}
         >
             <Grid
+                item
                 xs={5}
                 display="flex"
                 justifyContent="center"
@@ -34,6 +35,7 @@ export const Landing = () => {
             </Grid>
 
             <Grid
+                item
                 xs={7}
                 className=""
                 justifyContent="center"
@@ -53,6 +55,7 @@ export const Landing = () => {
             </Grid>
 
             <Grid
+                item
                 xs={12}
                 sx={{
                     display: "flex",
