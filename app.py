@@ -1,3 +1,4 @@
+import base64
 import json
 from typing import Dict
 import stylize
@@ -7,6 +8,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from starlette.responses import StreamingResponse, FileResponse
 from PIL import Image
 import os
+from io import BytesIO
+
 
 app = fastapi.FastAPI()
 model = stylize.Model()
@@ -34,6 +37,22 @@ def get_style_image (image:str) :
 @app.get("/styles/info")
 def get_styles_info () :
     return style_info
+
+@app.post("/stylizeb64")
+def upload_file(style:str= Form(), image: UploadFile = File()):
+
+    if image.content_type not in ["image/png", "image/jpeg"]:
+        raise HTTPException(status_code=415, detail="Wrong file type, use png or jpeg")
+
+    content1 = image.file
+    content2 = open(os.path.join(style_path, styles[style]['file']), "rb")
+    content_img = stylize.utils.load_img_from_bytesio(content1)
+    style_img = stylize.utils.load_img_from_bytesio(content2)
+    img = model.stylize(content_img, style_img)
+    buf = stylize.utils.img_to_bytesio(img, format="PNG")
+    buf = BytesIO(base64.b64encode(buf.read()))
+    buf.seek(0)
+    return StreamingResponse(buf, media_type="image/png;base64")
 
 @app.post("/stylize")
 def upload_file(style:str= Form(), image: UploadFile = File()):
