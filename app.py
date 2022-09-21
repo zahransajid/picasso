@@ -25,39 +25,42 @@ app.add_middleware(
 
 style_path = "./stylize/style_images/"
 style_info = json.loads(open("./stylize/styles.json").read())
-styles: Dict[str, any] = {style['id'] : style for style in style_info}
+styles: Dict[str, any] = {style["id"]: style for style in style_info}
 
 # Load images into memory
 images = {}
 ids = list(styles.keys())
 for id in ids:
-    fp = os.path.join(style_path,styles[id]['file'])
-    f = open(fp,'rb')
+    fp = os.path.join(style_path, styles[id]["file"])
+    f = open(fp, "rb")
     images[id] = f.read()
     f.close()
 
+
 @app.get("/styles/image/{image}")
-def get_style_image (image:str) :
+def get_style_image(image: str):
     style = styles.get(image)
-    if not style : 
+    if not style:
         raise HTTPException(status_code=415, detail="Style not found")
     return FileResponse(os.path.join(style_path, style["file"]))
 
+
 @app.get("/styles/info")
-def get_styles_info () :
+def get_styles_info():
     return style_info
 
+
 @app.post("/stylizeb64")
-def upload_file(style:str= Form(), image: UploadFile = File()):
+def upload_file(style: str = Form(), image: UploadFile = File()):
     """API route to return base64 encoded stylized image.
-    
+
     Parameters:
     - style : str - is a string containing the appropriate id of style image
     - image : UploadFile - contains the content image submitted by the user"""
     # Check if input file or id is invalid
     if image.content_type not in ["image/png", "image/jpeg"]:
         raise HTTPException(status_code=415, detail="Wrong file type, use png or jpeg")
-    if(not(style in ids)):
+    if not (style in ids):
         raise HTTPException(status_code=400, detail="Invalid ID")
     # Load in style image from images list
     content2 = BytesIO(images[style])
@@ -74,18 +77,19 @@ def upload_file(style:str= Form(), image: UploadFile = File()):
     buf.seek(0)
     return StreamingResponse(buf, media_type="image/png;base64")
 
+
 @app.post("/stylize")
-def upload_file(style:str= Form(), image: UploadFile = File()):
+def upload_file(style: str = Form(), image: UploadFile = File()):
     """API route to return stylized image. Debug only at this point.
-    
+
     Parameters:
     - style : str - is a string containing the appropriate id of style image
     - image : UploadFile - contains the content image submitted by the user"""
     if image.content_type not in ["image/png", "image/jpeg"]:
         raise HTTPException(status_code=415, detail="Wrong file type, use png or jpeg")
-    if(not(style in ids)):
+    if not (style in ids):
         raise HTTPException(status_code=415, detail="Invalid ID")
-    
+
     content1 = image.file
     content2 = BytesIO(images[style])
     content2.seek(0)
