@@ -1,10 +1,8 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
     Typography,
     Button,
-    Grid,
     Box,
-    Card,
     IconButton,
     CircularProgress,
     Backdrop,
@@ -20,9 +18,33 @@ import Carousel, { CarouselItem } from "./Carousel";
 import { redirect, useNavigate } from "react-router-dom";
 import { useSnackbar } from "notistack";
 
+// Adds the WASM backend to the global backend registry.
+import "@tensorflow/tfjs-backend-wasm";
+import { setWasmPaths } from "@tensorflow/tfjs-backend-wasm";
+
+// Import @tensorflow/tfjs-core
+import * as tf from "@tensorflow/tfjs-core";
+// Import @tensorflow/tfjs-tflite.
+import {
+    GraphModel,
+    loadGraphModel,
+    Tensor3D,
+    Tensor4D,
+} from "@tensorflow/tfjs";
+import { margin } from "@mui/system";
+// import wasmSmidPath from "./tfjs-backend-wasm-simd.wasm";
+const wasmSimdPath = require("../../node_modules/@tensorflow/tfjs-backend-wasm/dist/tfjs-backend-wasm-simd.wasm");
+const wasmSimdThreadedPath = require("../../node_modules/@tensorflow/tfjs-backend-wasm/dist/tfjs-backend-wasm-threaded-simd.wasm");
+const wasmPath = require("../../node_modules/@tensorflow/tfjs-backend-wasm/dist/tfjs-backend-wasm.wasm");
+setWasmPaths({
+    "tfjs-backend-wasm.wasm": wasmPath,
+    "tfjs-backend-wasm-simd.wasm": wasmSimdPath,
+    "tfjs-backend-wasm-threaded-simd.wasm": wasmSimdThreadedPath,
+});
+
 interface props {
-    image: string | undefined;
-    setImage: React.Dispatch<React.SetStateAction<string | undefined>>;
+    image: tf.Tensor<tf.Rank> | undefined;
+    setImage: React.Dispatch<React.SetStateAction<tf.Tensor<tf.Rank> | undefined>>;
 }
 
 export const Stylize = (props: props) => {
@@ -31,13 +53,18 @@ export const Stylize = (props: props) => {
     const [userImageFile, setUserImageFile] = useState<File>();
     const [selectImagePrompt, setSelectImagePrompt] =
         useState("Select an Image");
-    const [activeIndex, setActiveIndex] = useState(1);
-    const [loading, setLoading] = useState(false);
-    const {enqueueSnackbar, closeSnackbar} = useSnackbar();
+    const [activeIndex, setActiveIndex] = useState(0);
+    const [loading, setLoading] = useState(true);
+    const { enqueueSnackbar, closeSnackbar } = useSnackbar();
     const [stylesInfo, setStylesInfo] = useState<
         | Array<{ id: string; title: any; file: any; description: any }>
         | undefined
     >(undefined);
+
+    const [model, setModel] = useState<GraphModel | undefined>(undefined);
+    const contentImage = useRef<HTMLImageElement>(null);
+    const styleImage = useRef<HTMLImageElement>(null);
+
     const onFileSelected = (e: React.ChangeEvent<HTMLInputElement>) => {
         const files = e.target.files;
         if (!files || files.length < 1)
@@ -55,25 +82,45 @@ export const Stylize = (props: props) => {
         setActiveIndex(activeIndex - 1);
     };
 
-    const enqueueRequest = async () => {
-        if (userImageFile === undefined)
-            return enqueueSnackbar("Please select an image to stylize");
-        setLoading(true);
-        api.send_files(userImageFile!, stylesInfo![activeIndex].id).then(
-            (data) => {
-                setLoading(false);
-                console.log(data);
-                props.setImage(data);
-                navigate("/result");
-            }
-        );
-    };
+    // const enqueueRequest = async () => {
+    //     if (userImageFile === undefined)
+    //         return enqueueSnackbar("Please select an image to stylize");
+    //     setLoading(true);
+    //     api.send_files(userImageFile!, stylesInfo![activeIndex].id).then(
+    //         (data) => {
+    //             setLoading(false);
+    //             props.setImage(data);
+    //             navigate("/result");
+    //         }
+    //     );
+    // };
+
+    function stylize() {
+        const tensor = tf.tidy(() => {
+            const style_tensor = tf.browser.fromPixels(styleImage.current!);
+            const content_tensor = tf.browser.fromPixels(contentImage.current!);
+            // Normalize.
+            const input = tf.div(tf.expandDims(style_tensor), 255);
+            const input2 = tf.div(tf.expandDims(content_tensor), 255);
+            console.log(input);
+            console.log(input2);
+
+            console.log(model?.inputs);
+            const outputTensor = model?.execute([input2, input]) as tf.Tensor;
+            return outputTensor;
+        });
+        tensor.print();
+        props.setImage(tensor);
+        navigate("/result");
+    }
 
     useEffect(() => {
         setLoading(true);
-        api.get_styles().then((styles) => {
-            setStylesInfo(styles);
-            setLoading(false);
+        tf.setBackend("wasm").then(() => {
+            loadGraphModel("mobilenet/web_model/model.json").then((model) => {
+                setLoading(false);
+                setModel(model);
+            });
         });
     }, []);
     return (
@@ -119,15 +166,27 @@ export const Stylize = (props: props) => {
                             component="label"
                             variant="text"
                             sx={{
-                                backgroundImage: `url('${userImage}')`,
-                                backgroundPosition: "center",
-                                backgroundRepeat: "no-repeat",
-                                backgroundSize: "cover",
-                                alignItems: "flex-end",
+                                display: "flex",
+                                flexDirection: "column",
+                                alignItems: "justify",
                                 width: "90%",
                                 height: "90%",
                             }}
                         >
+                            <img
+                                src={userImage}
+                                ref={contentImage}
+                                height="auto"
+                                width="100%"
+                                style={{
+                                    objectFit: "cover",
+                                    objectPosition: "center",
+                                    position: "relative",
+                                    left: "50%",
+                                    transform: "translateX(-50%)",
+                                    zIndex: "-10",
+                                }}
+                            />
                             <Typography
                                 variant="h4"
                                 sx={{
@@ -155,7 +214,7 @@ export const Stylize = (props: props) => {
                     justifyContent: "center",
                 }}
             >
-                <IconButton color="secondary" onClick={enqueueRequest}>
+                <IconButton color="secondary" onClick={stylize}>
                     <CompareArrowsIcon
                         sx={{
                             fontSize: "3rem",
@@ -176,9 +235,8 @@ export const Stylize = (props: props) => {
                     <Box
                         sx={{
                             width: "100%",
+                            height: "100%",
                             display: "flex",
-                            marginTop: "10px",
-                            marginBottom: "10px",
                             alignItems: "center",
                             justifyContent: "center",
                             flex: 1,
@@ -203,19 +261,24 @@ export const Stylize = (props: props) => {
                             activeIndex={activeIndex}
                             style={{
                                 margin: "10px",
+                                height: "90%",
+                                overflow: "hidden",
                             }}
                         >
                             {stylesInfo === undefined ? (
                                 <CarouselItem
                                     key="index"
                                     style={{
-                                        backgroundImage: `url('/styles/style_1.jpg')`,
-                                        backgroundPosition: "center",
-                                        backgroundRepeat: "no-repeat",
-                                        backgroundSize: "cover",
-                                        font: "Times New Roman",
+                                        height: "100%",
                                     }}
-                                />
+                                >
+                                    <img
+                                        ref={styleImage}
+                                        src="/styles/style_1.jpg"
+                                        width="100%"
+                                        height="auto"
+                                    />
+                                </CarouselItem>
                             ) : (
                                 stylesInfo.map((style) => (
                                     <CarouselItem

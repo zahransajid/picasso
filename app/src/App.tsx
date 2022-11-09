@@ -11,6 +11,8 @@ import { NavBar } from "./components/NavBar";
 import Stylize from "./components/Stylize";
 import Result from "./components/Result";
 import Landing from "./components/Landing";
+import Processor from "./components/processor";
+import * as tf from "@tensorflow/tfjs-core";
 
 let theme = createTheme({
     palette: {
@@ -34,7 +36,7 @@ let theme = createTheme({
 theme = responsiveFontSizes(theme);
 
 const App = () => {
-    const [resultImage, setResultImage] = useState<string | undefined>(
+    const [resultImage, setResultImage] = useState<tf.Tensor<tf.Rank> | undefined>(
         undefined
     );
     return (
@@ -56,6 +58,10 @@ const App = () => {
                         <Route
                             path="result"
                             element={<Result image={resultImage} />}
+                        />
+                        <Route 
+                            path="beta"
+                            element={<Processor/>}
                         />
                     </Routes>
                 </SnackbarProvider>

@@ -1,5 +1,6 @@
 {
     "compilerOptions": {
+      "skipLibCheck": true,
       "esModuleInterop": true,
       "jsx": "react",
       "module": "esnext",
@@ -12,9 +13,7 @@
       "sourceMap": true,
       "target": "esnext",
     },
-    "include": [
-      "src"
-    ],
+    "include": ["src", "index.d.ts"],
     "exclude": [
       "node_modules"
     ]

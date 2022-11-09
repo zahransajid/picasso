@@ -1,22 +1,26 @@
 import { useTheme } from "@mui/material/styles";
 import { Box, Button, Typography } from "@mui/material";
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { useNavigate, redirect } from "react-router-dom";
 import DisplayCard from "./DisplayCard";
 import ReplayIcon from "@mui/icons-material/Replay";
+import * as tf from "@tensorflow/tfjs";
 
 interface props {
-    image: string | undefined;
+    image: tf.Tensor<tf.Rank> | undefined;
 }
 
 export const Result = (props: props) => {
     // const url = window.URL.createObjectURL(props.image);
+    const canvas = useRef<HTMLCanvasElement>(null);
     const theme = useTheme();
     const navigate = useNavigate();
     useEffect(() => {
         if (props.image === undefined) {
             navigate("/stylize");
             console.log("hit");
+        } else {
+            tf.browser.toPixels(props.image.as3D(props.image.shape[1]!, props.image.shape[2]!, 3), canvas.current!);
         }
     }, []);
 
@@ -47,12 +51,9 @@ export const Result = (props: props) => {
                     padding: "10px",
                 }}
             >
-                <img
-                    src={`data:image/png;base64,${props.image}`}
-                    style={{
-                        height: "100%",
-                    }}
-                />
+            <canvas 
+                ref={canvas}
+            />
             </DisplayCard>
 
             <Button
