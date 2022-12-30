@@ -44,8 +44,8 @@ body {
       background-image: url("../public/background.jpg");
     
       /* Add the blur effect */
-      filter: blur(8px);
-      -webkit-filter: blur(8px);
+      /* filter: blur(8px);
+      -webkit-filter: blur(8px); */
     
       /* Full height */
       height: 100%;
@@ -55,8 +55,4 @@ body {
       background-repeat: no-repeat;
       background-size: cover;
       z-index: -1;
-}
-
-.light-teal {
-  background-color: rgba(0,0,0, 0.4);
 }

@@ -8,71 +8,61 @@ export const Landing = () => {
     const navigate = useNavigate();
 
     return (
-        <Grid
-            container
-            spacing={0}
-            sx={{
-                height: "100%",
+        <div
+            style={{
                 display: "flex",
-                marginTop: "5px",
+                flexDirection: "row",
+                flex: 1,
+                width: 0,
             }}
         >
-            <Grid
-                item
-                xs={5}
-                display="flex"
-                justifyContent="center"
-                alignItems="center"
-            >
-                <Box
-                    component="img"
-                    sx={{
-                        width: "70%",
-                        height: "auto",
-                    }}
-                    src="art_lover.svg"
-                ></Box>
-            </Grid>
-
-            <Grid
-                item
-                xs={7}
-                className=""
-                justifyContent="center"
-                alignContent="center"
-                display="flex"
-            >
-                <Typography
-                    alignSelf="center"
-                    variant="h1"
-                    fontWeight="200"
-                    textAlign="right"
-                    marginRight="20px"
-                    color={theme.palette.primary.main}
-                >
-                    Reincarnating the art of the past with the AI of today
-                </Typography>
-            </Grid>
-
-            <Grid
-                item
-                xs={12}
-                sx={{
+            <div
+                style={{
                     display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "space-evenly",
                     alignItems: "center",
-                    justifyContent: "center",
+                    flex: 1,
+                    margin: "20px",
                 }}
             >
+                <Typography variant="h1">
+                    Your Photos <br />
+                    Repainted.
+                </Typography>
+
                 <Button
+                    variant="outlined"
                     size="large"
-                    variant="contained"
-                    startIcon={<ColorLensIcon />}
+                    disableRipple
+                    style={{
+                        borderWidth: "thick",
+                    }}
                     onClick={() => navigate("/stylize")}
                 >
-                    Get Started
+                    <Typography variant="h5">Get Started</Typography>
                 </Button>
-            </Grid>
-        </Grid>
+            </div>
+
+            <div
+                style={{
+                    display: "flex",
+                    flex: 1,
+                    padding: "10px",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    overflow: "hidden",
+                }}
+            >
+                <img
+                    src="processing.gif"
+                    alt="An abstract image"
+                    style={{
+                        height: "100%",
+                    }}
+                />
+            </div>
+        </div>
     );
 };
 

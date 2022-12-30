@@ -40,8 +40,8 @@ module.exports = {
       template: './public/index.html',
     }),
     new MiniCssExtractPlugin(),
-    new webpack.ProvidePlugin({
-      Buffer: ['buffer', 'Buffer'],
-    }),
+    // new webpack.ProvidePlugin({
+    //   Buffer: ['buffer', 'Buffer'],
+    // }),
   ],
 };

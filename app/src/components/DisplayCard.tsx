@@ -10,22 +10,22 @@ type props = {
 const DisplayCard = (props: props) => {
     const theme = useTheme();
     return (
-        <Card
-            sx={{
+        <div
+            style={{
                 width: "80%",
                 height: "70%",
-                backgroundColor: "rgba(0,0,0, 0.4)",
+                // backgroundColor: "rgba(0,0,0, 0.4)",
                 display: "flex",
                 flexDirection: "column",
-                borderColor: theme.palette.secondary.main,
-                borderRadius: "15px",
-                borderStyle: "solid",
-                borderWidth: "2px",
+                borderColor: theme.palette.primary.main,
+                borderStyle: "dashed",
+                borderWidth: "10px",
+                overflow: "hidden",
                 ...props.style,
             }}
         >
             {props.children}
-        </Card>
+        </div>
     );
 };
 
