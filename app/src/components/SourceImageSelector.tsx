@@ -2,6 +2,7 @@ import { Button, Typography } from "@mui/material";
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import DisplayCard from "./DisplayCard";
+import placeholder from "../../public/sample_portrait.jpg";
 
 interface props {
     sourceImage: string | undefined;
@@ -10,7 +11,6 @@ interface props {
 
 export default function SourceImageSelector(props: props) {
     const navigate = useNavigate();
-    const sample_portrait = "/sample_portrait.jpg";
     const onFileSelected = (e: React.ChangeEvent<HTMLInputElement>) => {
         const files = e.target.files;
         if (!files || files.length < 1)
@@ -79,7 +79,7 @@ export default function SourceImageSelector(props: props) {
                             src={
                                 props.sourceImage
                                     ? props.sourceImage
-                                    : sample_portrait
+                                    : placeholder
                             }
                             style={{
                                 height: "110%",

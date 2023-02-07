@@ -9,6 +9,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Stylize from "./components/Stylize";
 import Landing from "./components/Landing";
 import Frame from "./components/Frame";
+declare var __basename__: string;
 
 let theme = createTheme({
     palette: {
@@ -33,7 +34,7 @@ theme = responsiveFontSizes(theme);
 
 const App = () => {
     return (
-        <BrowserRouter>
+        <BrowserRouter basename={__basename__}>
             <ThemeProvider theme={theme}>
                 <Frame>
                     <Routes>

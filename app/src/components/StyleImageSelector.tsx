@@ -1,6 +1,7 @@
 import { Button, ImageList, ImageListItem, Typography } from "@mui/material";
 import React, { useState } from "react";
 import { useNavigate } from "react-router";
+import styles from "./Styles";
 
 interface props {
     styleImage: string | undefined;
@@ -9,16 +10,16 @@ interface props {
     >;
 }
 
-const styles = [
-    "style_1.jpg",
-    "style_2.jpg",
-    "style_3.jpg",
-    "style_4.jpg",
-    "style_6.jpg",
-    "style_7.jpg",
-    "style_8.jpg",
-    "style_9.jpg",
-];
+// const styles = [
+//     "style_1.jpg",
+//     "style_2.jpg",
+//     "style_3.jpg",
+//     "style_4.jpg",
+//     "style_6.jpg",
+//     "style_7.jpg",
+//     "style_8.jpg",
+//     "style_9.jpg",
+// ];
 
 const STYLE_IMAGES_ROOT = "/styles/";
 
@@ -28,7 +29,7 @@ export default function StyleImageSelector(props: props) {
 
     const onSelectStyle = (counter : number) => {
         setSelectedStyle(counter);
-        props.setStyleImage(STYLE_IMAGES_ROOT + styles[counter])
+        props.setStyleImage(styles[counter])
     }
     return (
         <div
@@ -95,7 +96,7 @@ export default function StyleImageSelector(props: props) {
                                 }}
                             >
                                 <img
-                                    src={STYLE_IMAGES_ROOT+img}
+                                    src={img}
                                     loading="lazy"
                                     style={{
                                         display: "block",

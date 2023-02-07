@@ -7,14 +7,17 @@ import { setWasmPaths } from "@tensorflow/tfjs-backend-wasm";
 import { Button, Typography } from "@mui/material";
 import DisplayCard from "./DisplayCard";
 
-const wasmSimdPath = require("../../node_modules/@tensorflow/tfjs-backend-wasm/dist/tfjs-backend-wasm-simd.wasm");
-const wasmSimdThreadedPath = require("../../node_modules/@tensorflow/tfjs-backend-wasm/dist/tfjs-backend-wasm-threaded-simd.wasm");
-const wasmPath = require("../../node_modules/@tensorflow/tfjs-backend-wasm/dist/tfjs-backend-wasm.wasm");
+import wasmSimdPath from "../../node_modules/@tensorflow/tfjs-backend-wasm/dist/tfjs-backend-wasm-simd.wasm";
+import wasmSimdThreadedPath from "../../node_modules/@tensorflow/tfjs-backend-wasm/dist/tfjs-backend-wasm-threaded-simd.wasm";
+import wasmPath from "../../node_modules/@tensorflow/tfjs-backend-wasm/dist/tfjs-backend-wasm.wasm";
+import animated_gif from "../../public/processing.gif"
+
 setWasmPaths({
     "tfjs-backend-wasm.wasm": wasmPath,
     "tfjs-backend-wasm-simd.wasm": wasmSimdPath,
     "tfjs-backend-wasm-threaded-simd.wasm": wasmSimdThreadedPath,
 });
+declare var __basename__: string;
 
 interface props {
     styleImage: string | undefined;
@@ -30,12 +33,11 @@ const PROMPTS: Record<STATES, string> = {
     complete: "Lo and Behold !",
 };
 
+const MODEL_PATH = __basename__ + "mobilenet/web_model/model.json"
 export default function Process(props: props) {
     const [currentState, setCurrentState] = useState<STATES>("rendering");
     const [model, setModel] = useState<GraphModel | undefined>(undefined);
     const canvas = useRef<HTMLCanvasElement>(null);
-    const sourceImage = new Image();
-    const styleImage = new Image();
     const styleImageRef = useRef<HTMLImageElement>(null);
     const sourceImageRef = useRef<HTMLImageElement>(null);
 
@@ -43,7 +45,7 @@ export default function Process(props: props) {
         let isMounted = true;
         setCurrentState("loading");
         tf.setBackend("wasm").then(() => {
-            loadGraphModel("/mobilenet/web_model/model.json").then((model) => {
+            loadGraphModel(MODEL_PATH).then((model) => {
                 if (isMounted) {
                     setModel(model);
                     setCurrentState("approval");
@@ -113,8 +115,8 @@ export default function Process(props: props) {
                         height: "100%",
                         width: "50vh",
                         overflow: "hidden",
-                        display: currentState == "complete" ? "none" : "block",
-                        margin: '10px',
+                        display: currentState == "complete" ? "none" : "flex",
+                        alignItems: "center"
                     }}
                 >
                     <img
@@ -122,7 +124,7 @@ export default function Process(props: props) {
                         ref={sourceImageRef}
                         src={props.sourceImage}
                         alt="Source Image"
-                        style={{ height: "100%" }}
+                        style={{ height: "100%", boxSizing: "border-box", padding: "10px"}}
                     />
                 </DisplayCard>
                 <div
@@ -134,7 +136,7 @@ export default function Process(props: props) {
                     }}
                 >
                     <img
-                        src="/processing.gif"
+                        src={animated_gif}
                         alt="A moving artwork"
                         style={{ height: "100%" }}
                     />
@@ -144,7 +146,8 @@ export default function Process(props: props) {
                         height: "100%",
                         width: "50vh",
                         overflow: "hidden",
-                        display: currentState == "complete" ? "none" : "block", 
+                        display: currentState == "complete" ? "none" : "flex",
+                        alignItems: "center" 
                     }}
                 >
                     <img
@@ -152,7 +155,7 @@ export default function Process(props: props) {
                         ref={styleImageRef}
                         src={props.styleImage}
                         alt="Style Image"
-                        style={{ height: "100%"}}
+                        style={{ height: "100%", boxSizing: "border-box", padding: "10px"}}
                     />
                 </DisplayCard>
 

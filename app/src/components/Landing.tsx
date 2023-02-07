@@ -1,10 +1,12 @@
 import { Box, Button, Grid, Typography } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import React from "react";
-import ColorLensIcon from "@mui/icons-material/ColorLens";
 import { useNavigate } from "react-router-dom";
+
+import animated_gif from "../../public/processing.gif"
 export const Landing = () => {
-    const theme = useTheme();
+    console.log(animated_gif);
+    
     const navigate = useNavigate();
 
     return (
@@ -55,7 +57,7 @@ export const Landing = () => {
                 }}
             >
                 <img
-                    src="processing.gif"
+                    src={animated_gif}
                     alt="An abstract image"
                     style={{
                         height: "100%",
