@@ -1,0 +1,9 @@
+version: "2"
+services:
+  nginx-react:
+    container_name: picasso
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports: 
+      - 8090:80
